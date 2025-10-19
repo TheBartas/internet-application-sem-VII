@@ -1,0 +1,122 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #abd3fc;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    margin: 0;
+    padding: 40px;
+}
+
+.todo-list-main {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 500px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.todo-list-search-bar {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.todo-list-tasks {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: auto;
+}
+
+.todo-list-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f9fafb;
+    border: 1px solid #616161;
+    border-radius: 4px;
+    padding: 4px 6px;
+    margin: 0 10px;
+}
+
+.todo-list-row:hover{
+    background-color: #dad8d8;
+}
+
+.todo-list-row-p-date {
+    border: 1px solid #616161;
+    border-radius: 5px;
+    padding: 5px;
+    text-align: center;
+    background-color: #abd3fc;
+    margin: 0 10px;
+}
+
+.todo-list-row #text {
+    flex: 1;
+    margin: 0 10px;
+    word-break: break-word;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 10px;
+    transition: background-color 0.2s;
+}
+
+.todo-list-row-mark-button {
+    background-color: #4caf50;
+    color: white;
+}
+.todo-list-row-mark-button:hover {
+    background-color: #45a049;
+}
+
+.todo-list-row-delete {
+    background-color: #f44336;
+    color: white;
+}
+.todo-list-row-delete:hover {
+    background-color: #d32f2f;
+}
+
+.todo-list-input-date,
+.todo-list-input-todo {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.todo-list-add-task {
+    background-color: #2196f3;
+    color: white;
+    font-weight: bold;
+}
+
+.todo-list-add-task:hover {
+    background-color: #1976d2;
+}
+
+.todo-list-edit-save-btn {
+    background-color: #95ce98;
+}
+
+.todo-list-edit-save-btn:hover {
+    background-color: #7fb382;
+}
+
+mark {
+    background-color: rgb(120, 194, 110);
+    color: black;
+    padding: 0 2px;
+    border-radius: 2px;
+}

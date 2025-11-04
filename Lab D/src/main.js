@@ -24,6 +24,7 @@ const WeatherApp = class {
             this.drawWeather();
         });
         req.send();
+        console.log('GET send to current!');
     }
 
     getForecast(query) {
@@ -35,6 +36,7 @@ const WeatherApp = class {
             this.forecast = data.list;
             this.drawWeather();
         });
+        console.log('GET send to forecast!');
     }
 
     getWeather(query) {
@@ -44,38 +46,76 @@ const WeatherApp = class {
 
     drawWeather() {
         this.resultsBlock.innerHTML = '';
-        this.groupDay = [];
+        if (!this.forecast || this.forecast.length === 0) return;
 
-        if (this.currentWeather) {
-            const date = new Date(this.currentWeather.dt * 1000);
-            const dateTimeString = `${date.toLocaleDateString("pl-PL")} ${date.toLocaleTimeString("pl-PL")}`;
+        const HOURS = [1, 4, 7, 10, 13, 16, 19, 22];
+        const grouped = {};
 
-            const temperature = this.currentWeather.main.temp;
-            const feelsLikeTemperature = this.currentWeather.main.feels_like;
-            const iconName = this.currentWeather.weather[0].icon;
-            const description = this.currentWeather.weather[0].description;
+        const currentDate = new Date(this.currentWeather.dt * 1000);
+        const currentDayKey = currentDate.toISOString().split('T')[0];
+        if (!grouped[currentDayKey]) grouped[currentDayKey] = [];
+        grouped[currentDayKey].push(this.currentWeather);
 
-            const weatherBlock = this.createWeatherBlock(dateTimeString, temperature, feelsLikeTemperature, iconName, description);
-            this.resultsBlock.appendChild(weatherBlock);
-            
+        for (let item of this.forecast) {
+            const date = new Date(item.dt * 1000);
+            const dayKey = date.toISOString().split('T')[0];
+            if (!grouped[dayKey]) grouped[dayKey] = [];
+            grouped[dayKey].push(item);
         }
 
-        if (this.forecast && this.forecast.length > 0) {
-            for (let i = 0; i < this.forecast.length; i++) {
-                let weather = this.forecast[i];
-                const date = new Date(weather.dt * 1000);
-                const dateTimeString = `${date.toLocaleDateString("pl-PL")} ${date.toLocaleTimeString("pl-PL")}`;
+        console.log(grouped);
 
-                const temperature = weather.main.temp;
-                const feelsLikeTemperature = weather.main.feels_like;
-                const iconName = weather.weather[0].icon;
-                const description = weather.weather[0].description;
+        const days = Object.keys(grouped).slice(0, 5);
 
-                const weatherBlock = this.createWeatherBlock(dateTimeString, temperature, feelsLikeTemperature, iconName, description);
-                this.resultsBlock.appendChild(weatherBlock);
+        const container = document.createElement("div");
+        container.className = "forecast-grid";
+        container.style.display = "grid";
+        container.style.gridTemplateColumns = `repeat(${days.length}, 1fr)`;
+        container.style.gap = "20px";
+
+        for (let day of days) {
+            const col = document.createElement("div");
+            col.className = "forecast-day-col";
+
+            const dayTitle = document.createElement("h3");
+            const dateObj = new Date(day);
+            dayTitle.innerText = dateObj.toLocaleDateString("pl-PL", { weekday: "long", day: "numeric", month: "long" });
+            col.appendChild(dayTitle);
+
+            const dayData = grouped[day];
+            const hourMap = {};
+            for (let entry of dayData) {
+                const h = new Date(entry.dt * 1000).getHours();
+                hourMap[h] = entry;
             }
-        }
 
+            for (let h of HOURS) {
+                const weather = hourMap[h];
+                if (weather) {
+                    const temperature = weather.main.temp;
+                    const feelsLikeTemperature = weather.main.feels_like;
+                    const iconName = weather.weather[0].icon;
+                    const description = weather.weather[0].description;
+                    const block = this.createWeatherBlock(
+                        `${h}:00`,
+                        temperature,
+                        feelsLikeTemperature,
+                        iconName,
+                        description
+                    );
+                col.appendChild(block);
+                } else {
+                    const emptyBlock = document.createElement("div");
+                    emptyBlock.className = "weather-block-empty";
+                    emptyBlock.innerHTML = `<div class="weather-date">${h}:00</div><div>—</div>`;
+                    col.appendChild(emptyBlock);
+                }
+            }
+
+            container.appendChild(col);
+        }   
+
+        this.resultsBlock.appendChild(container);
     }
 
     createWeatherBlock(dateString, temperature, feelsLikeTemperature, iconName, description) {
